@@ -1,37 +1,224 @@
-export default function Page() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-neutral-400">
-      <div className="flex w-full max-w-md flex-col items-start gap-8">
-        <svg
-          fill="currentColor"
-          viewBox="0 0 147 70"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          className="size-10 text-white"
-        >
-          <path d="M56 50.2031V14H70V60.1562C70 65.5928 65.5928 70 60.1562 70C57.5605 70 54.9982 68.9992 53.1562 67.1573L0 14H19.7969L56 50.2031Z" />
-          <path d="M147 56H133V23.9531L100.953 56H133V70H96.6875C85.8144 70 77 61.1856 77 50.3125V14H91V46.1562L123.156 14H91V0H127.312C138.186 0 147 8.81439 147 19.6875V56Z" />
-        </svg>
+import { auth } from '@/lib/auth'
+import { headers } from 'next/headers'
+import Link from 'next/link'
 
-        <div className="space-y-3">
-          <h1 className="text-balance text-2xl font-semibold tracking-tight text-white">
-            To get started, describe what you want to build.
-          </h1>
-          <p className="text-pretty text-sm leading-relaxed text-neutral-500">
-            This is the default page for a fresh v0 project. Open the prompt and
-            tell v0 what to create, or browse the{' '}
-            <a
-              href="https://v0.app/templates"
-              target="_blank"
-              rel="noreferrer"
-              className="text-neutral-300 underline underline-offset-4 hover:text-white"
-            >
-              Community
-            </a>{' '}
-            for inspiration.
-          </p>
+export default async function HomePage() {
+  const session = await auth.api.getSession({ headers: await headers() })
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="border-b border-border bg-card/50 backdrop-blur">
+        <div className="container mx-auto flex items-center justify-between px-4 py-4">
+          <div className="text-2xl font-bold text-primary">QuickMenu</div>
+          <div className="flex gap-4">
+            {session?.user ? (
+              <>
+                <span className="flex items-center text-sm text-muted-foreground">
+                  {session.user.email}
+                </span>
+                <Link
+                  href="/admin"
+                  className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
+                >
+                  Dashboard
+                </Link>
+                <form
+                  action={async () => {
+                    'use server'
+                    await auth.api.signOut({ headers: await headers() })
+                  }}
+                >
+                  <button
+                    type="submit"
+                    className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted"
+                  >
+                    Sign Out
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </main>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="mx-auto max-w-3xl text-center">
+          <h1 className="text-5xl font-bold text-foreground md:text-6xl">
+            Digital Menus Made Simple
+          </h1>
+          <p className="mt-6 text-xl text-muted-foreground">
+            Create, manage, and share QR code menus for your restaurant. No printing, no outdated menus, always up-to-date.
+          </p>
+
+          <div className="mt-10 flex justify-center gap-4">
+            {session?.user ? (
+              <>
+                <Link
+                  href="/admin"
+                  className="rounded-lg bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90 font-semibold"
+                >
+                  Go to Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-up"
+                  className="rounded-lg bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90 font-semibold"
+                >
+                  Get Started Free
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="rounded-lg border-2 border-primary px-8 py-3 text-primary hover:bg-primary/10 font-semibold"
+                >
+                  Sign In
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="border-t border-border bg-card py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+            Why Choose QuickMenu?
+          </h2>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="rounded-lg border border-border p-6">
+              <div className="mb-4 h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl">📱</span>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">QR Code Menus</h3>
+              <p className="text-muted-foreground">
+                Generate unique QR codes for each restaurant. Customers scan and view your menu instantly.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-border p-6">
+              <div className="mb-4 h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl">⚡</span>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">Real-Time Updates</h3>
+              <p className="text-muted-foreground">
+                Update your menu anytime. Changes appear instantly - no reprinting, no waste.
+              </p>
+            </div>
+
+            <div className="rounded-lg border border-border p-6">
+              <div className="mb-4 h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl">🎨</span>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">Easy Management</h3>
+              <p className="text-muted-foreground">
+                Organize items into categories, set prices, mark items as unavailable, and more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+          How It Works
+        </h2>
+
+        <div className="mx-auto max-w-2xl space-y-8">
+          <div className="flex gap-6">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              1
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Create Your Restaurant</h3>
+              <p className="mt-2 text-muted-foreground">
+                Sign up and create a new restaurant account with basic information.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              2
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Build Your Menu</h3>
+              <p className="mt-2 text-muted-foreground">
+                Add menu categories (Appetizers, Main Courses, Desserts, etc.) and list your items with prices.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              3
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Get Your QR Code</h3>
+              <p className="mt-2 text-muted-foreground">
+                Get a unique QR code for your restaurant. Print it, display it, or share the link.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
+              4
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Customers Scan & Order</h3>
+              <p className="mt-2 text-muted-foreground">
+                Customers scan the QR code with their phones and view your beautiful digital menu.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="border-t border-border bg-card py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-foreground">Ready to go digital?</h2>
+          <p className="mt-4 text-muted-foreground">
+            Join restaurants worldwide using QuickMenu for contactless digital ordering.
+          </p>
+          {!session?.user && (
+            <Link
+              href="/sign-up"
+              className="mt-8 inline-block rounded-lg bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90 font-semibold"
+            >
+              Get Started Free
+            </Link>
+          )}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border bg-muted py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p>QuickMenu &copy; 2024. Empowering restaurants with digital menus.</p>
+        </div>
+      </footer>
+    </div>
   )
 }
