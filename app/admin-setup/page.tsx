@@ -28,11 +28,26 @@ export default function AdminSetupPage() {
     setMessage(null)
 
     try {
+      // First, initialize the database tables
+      console.log('[v0] Initializing database tables...')
+      const initResponse = await fetch('/api/db/init', { method: 'POST' })
+      const initData = await initResponse.json()
+      
+      if (!initResponse.ok) {
+        console.log('[v0] Init response:', initData)
+        setMessage({ type: 'error', text: `Database init error: ${initData.error}` })
+        setLoading(false)
+        return
+      }
+
+      console.log('[v0] Database initialized:', initData.message)
+
+      // Then create the admin account
       const result = await setupAdmin()
       if (result.success) {
         setMessage({
           type: 'success',
-          text: `${result.message} You can now login at /admin-login with the credentials shown above.`,
+          text: `${result.message} You can now login at /admin-login with credentials: admin@qmenu.com / admin123`,
         })
         setTimeout(() => {
           window.location.href = '/admin-login'
@@ -41,7 +56,7 @@ export default function AdminSetupPage() {
         setMessage({ type: 'error', text: result.error || 'Failed to create admin account' })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to create admin account' })
+      setMessage({ type: 'error', text: 'Failed to setup admin account' })
       console.error('[v0] Setup error:', error)
     } finally {
       setLoading(false)
@@ -65,6 +80,21 @@ export default function AdminSetupPage() {
     setLoading(true)
 
     try {
+      // First, initialize the database tables
+      console.log('[v0] Initializing database tables...')
+      const initResponse = await fetch('/api/db/init', { method: 'POST' })
+      const initData = await initResponse.json()
+      
+      if (!initResponse.ok) {
+        console.log('[v0] Init response:', initData)
+        setMessage({ type: 'error', text: `Database init error: ${initData.error}` })
+        setLoading(false)
+        return
+      }
+
+      console.log('[v0] Database initialized:', initData.message)
+
+      // Then create the admin account
       const response = await fetch('/api/admin/setup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
