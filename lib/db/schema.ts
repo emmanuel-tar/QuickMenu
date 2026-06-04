@@ -121,3 +121,32 @@ export const itemsRelations = relations(menuItems, ({ one, many }) => ({
 export const translationsRelations = relations(menuItemsTranslations, ({ one }) => ({
   item: one(menuItems, { fields: [menuItemsTranslations.menuItemId], references: [menuItems.id] }),
 }))
+
+// Admin Authentication Table
+export const adminAccounts = pgTable('admin_accounts', {
+  id: serial('id').notNull().primaryKey(),
+  email: text('email').notNull().unique(),
+  passwordHash: text('passwordHash').notNull(),
+  name: text('name'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+})
+
+// User/Staff Authentication Table
+export const userAccounts = pgTable('user_accounts', {
+  id: serial('id').notNull().primaryKey(),
+  restaurantId: integer('restaurantId').notNull().references(() => restaurants.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  passwordHash: text('passwordHash').notNull(),
+  name: text('name'),
+  isActive: boolean('isActive').notNull().default(true),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
+}, (table) => [
+  unique().on(table.restaurantId, table.email),
+])
+
+// Relations for user accounts
+export const userAccountsRelations = relations(userAccounts, ({ one }) => ({
+  restaurant: one(restaurants, { fields: [userAccounts.restaurantId], references: [restaurants.id] }),
+}))

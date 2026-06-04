@@ -39,18 +39,26 @@ export default async function HomePage() {
               </>
             ) : (
               <>
-                <Link
-                  href="/sign-in"
-                  className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90"
-                >
-                  Sign Up
-                </Link>
+                <div className="flex gap-2">
+                  <Link
+                    href="/admin-login"
+                    className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted text-sm"
+                  >
+                    Admin Login
+                  </Link>
+                  <Link
+                    href="/user-login"
+                    className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted text-sm"
+                  >
+                    Staff Login
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="rounded-lg bg-primary px-4 py-2 text-primary-foreground hover:bg-primary/90 text-sm"
+                  >
+                    Create Restaurant
+                  </Link>
+                </div>
               </>
             )}
           </div>
@@ -67,7 +75,7 @@ export default async function HomePage() {
             Create, manage, and share QR code menus for your restaurant. No printing, no outdated menus, always up-to-date.
           </p>
 
-          <div className="mt-10 flex justify-center gap-4">
+          <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             {session?.user ? (
               <>
                 <Link
@@ -83,13 +91,19 @@ export default async function HomePage() {
                   href="/sign-up"
                   className="rounded-lg bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90 font-semibold"
                 >
-                  Get Started Free
+                  Create Restaurant Account
                 </Link>
                 <Link
-                  href="/sign-in"
+                  href="/admin-login"
                   className="rounded-lg border-2 border-primary px-8 py-3 text-primary hover:bg-primary/10 font-semibold"
                 >
-                  Sign In
+                  Admin Login
+                </Link>
+                <Link
+                  href="/user-login"
+                  className="rounded-lg border-2 border-border px-8 py-3 text-foreground hover:bg-muted font-semibold"
+                >
+                  Staff Login
                 </Link>
               </>
             )}
