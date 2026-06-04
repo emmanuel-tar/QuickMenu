@@ -6,11 +6,11 @@ A modern, full-stack application for restaurants to create and manage digital QR
 
 - 🎫 **QR Code Generation** - Automatically generate unique QR codes for each restaurant
 - 📱 **Responsive Menu Viewer** - Beautiful, mobile-first menu display
-- 👨‍💼 **Admin Dashboard** - Manage multiple restaurants, categories, and menu items
-- 🔐 **Secure Authentication** - Email/password auth with Better Auth and Neon
+- 👨‍💼 **Dual Admin System** - Separate admin and staff authentication flows
+- 🔐 **Secure Authentication** - Multiple auth systems: Admin/Staff (session-based) + Better Auth
 - 📊 **Real-Time Updates** - Update menus instantly, changes appear immediately
 - 🏷️ **Price Management** - Show old prices, mark items as unavailable
-- 🌍 **Multi-Restaurant Support** - Manage unlimited restaurants from one account
+- 🌍 **Multi-Restaurant Support** - Admins manage multiple restaurants and staff accounts
 
 ## Tech Stack
 
@@ -25,39 +25,53 @@ A modern, full-stack application for restaurants to create and manage digital QR
 ```
 app/
   ├── page.tsx                          # Landing page
-  ├── sign-in/page.tsx                  # Sign-in page
-  ├── sign-up/page.tsx                  # Sign-up page
+  ├── admin-login/page.tsx              # Admin login
+  ├── admin-dashboard/page.tsx          # Admin dashboard
+  ├── user-login/page.tsx               # Staff login
+  ├── user/dashboard/page.tsx           # Staff dashboard
+  ├── sign-in/page.tsx                  # Restaurant owner sign-in (Better Auth)
+  ├── sign-up/page.tsx                  # Restaurant owner sign-up (Better Auth)
   ├── admin/
-  │   ├── page.tsx                      # Admin dashboard
-  │   └── restaurants/[id]/page.tsx     # Restaurant editor
+  │   ├── page.tsx                      # Owner dashboard
+  │   └── restaurants/[id]/page.tsx     # Menu editor
   ├── menu/[slug]/page.tsx              # Public menu viewer
   ├── api/auth/[...all]/route.ts        # Better Auth handler
-  └── actions/restaurants.ts            # Server actions
+  └── actions/
+      ├── admin-auth.ts                 # Admin authentication
+      ├── user-auth.ts                  # Staff authentication
+      └── restaurants.ts                # Restaurant management
 
 lib/
   ├── auth.ts                           # Better Auth config
   ├── auth-client.ts                    # Better Auth client
+  ├── password.ts                       # Password hashing utilities
   └── db/
       ├── index.ts                      # Drizzle setup
-      └── schema.ts                     # Database schema
+      └── schema.ts                     # Database schema (with admin/user tables)
 
 components/
   ├── admin/
   │   ├── create-restaurant-dialog.tsx  # Create restaurant modal
   │   ├── restaurant-card.tsx           # Restaurant card component
   │   ├── restaurant-editor.tsx         # Edit restaurant details
-  │   └── menu-manager.tsx              # Manage menu categories/items
+  │   ├── menu-manager.tsx              # Manage menu categories/items
+  │   └── manage-users-dialog.tsx       # Staff account management
+  ├── auth-form.tsx                     # Better Auth form
   └── menu/
       └── menu-viewer.tsx               # Public menu display
 ```
 
 ## Database Schema
 
-### Better Auth Tables
-- `user` - User accounts
-- `session` - Active sessions
+### Better Auth Tables (Legacy)
+- `user` - Restaurant owner accounts
+- `session` - Better Auth sessions
 - `account` - OAuth accounts (future)
 - `verification` - Email verification tokens
+
+### Admin & Staff Authentication
+- `admin_accounts` - System administrator accounts
+- `user_accounts` - Restaurant staff accounts (scoped per restaurant)
 
 ### App Tables
 - `restaurants` - Restaurant information
@@ -108,7 +122,50 @@ pnpm dev
 
 Visit `http://localhost:3000` to see the app.
 
+## Authentication System
+
+QuickMenu features a **dual authentication system** with three independent login flows:
+
+### Admin Login (`/admin-login`)
+- For system administrators managing restaurants and staff
+- Create and manage staff accounts
+- View all restaurants
+- Secure session-based authentication
+
+### Staff Login (`/user-login`)
+- For restaurant employees
+- Select restaurant from dropdown
+- Access menus and manage items
+- Session-based per-restaurant access
+
+### Restaurant Owner Account (`/sign-up` and `/sign-in`)
+- Original Better Auth system
+- Create and manage your own restaurants
+- Independent from admin/staff accounts
+
+For detailed authentication documentation, see:
+- **[AUTHENTICATION.md](./AUTHENTICATION.md)** - Technical overview
+- **[SETUP_AUTHENTICATION.md](./SETUP_AUTHENTICATION.md)** - Setup and deployment guide
+- **[AUTH_SYSTEM_SUMMARY.md](./AUTH_SYSTEM_SUMMARY.md)** - Architecture and features
+
 ## Usage
+
+### For System Admins
+
+1. **Login**: Go to `/admin-login` with admin credentials
+2. **Manage Restaurants**: View all restaurants on the admin dashboard
+3. **Create Staff Accounts**: 
+   - Click "Manage Staff" on any restaurant
+   - Click "+ Add New Staff Member"
+   - Enter name, email, and password
+4. **Monitor Access**: Deactivate staff accounts when needed
+
+### For Staff Members
+
+1. **Login**: Go to `/user-login`
+2. **Select Restaurant**: Choose your restaurant from the dropdown
+3. **Manage Menu**: Edit categories, items, prices, and availability
+4. **View Menu**: See how the menu appears to customers
 
 ### For Restaurant Owners
 
