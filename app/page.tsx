@@ -41,6 +41,12 @@ export default async function HomePage() {
               <>
                 <div className="flex gap-2">
                   <Link
+                    href="/admin-setup"
+                    className="rounded-lg border-2 border-primary px-4 py-2 text-primary hover:bg-primary/10 text-sm font-semibold"
+                  >
+                    Admin Setup
+                  </Link>
+                  <Link
                     href="/admin-login"
                     className="rounded-lg border border-border px-4 py-2 text-foreground hover:bg-muted text-sm"
                   >
@@ -88,20 +94,20 @@ export default async function HomePage() {
             ) : (
               <>
                 <Link
-                  href="/sign-up"
+                  href="/admin-setup"
                   className="rounded-lg bg-primary px-8 py-3 text-primary-foreground hover:bg-primary/90 font-semibold"
                 >
-                  Create Restaurant Account
+                  Setup Admin Account
                 </Link>
                 <Link
-                  href="/admin-login"
+                  href="/sign-up"
                   className="rounded-lg border-2 border-primary px-8 py-3 text-primary hover:bg-primary/10 font-semibold"
                 >
-                  Admin Login
+                  Create Restaurant
                 </Link>
                 <Link
                   href="/user-login"
-                  className="rounded-lg border-2 border-border px-8 py-3 text-foreground hover:bg-muted font-semibold"
+                  className="rounded-lg border border-border px-8 py-3 text-foreground hover:bg-muted font-semibold"
                 >
                   Staff Login
                 </Link>
